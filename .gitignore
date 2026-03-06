@@ -1,17 +1,5 @@
-# Ignore virtual environment
 venv/
-
-# Ignore results
-results/
-
-# Ignore logs
-logs/
-
-# Ignore cache
-.cache/
-
-# Ignore Python cache
 __pycache__/
-
-# Ignore dataset
-dataset.csv
+*.pyc
+.DS_Store
+.env
