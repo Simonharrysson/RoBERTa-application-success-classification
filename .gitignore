@@ -1,5 +1,18 @@
+# virtual environments
+distilbert_venv/
 venv/
+
+# python
 __pycache__/
 *.pyc
 .DS_Store
 .env
+
+# large output files
+PII_extraction/anonymized_files/
+PII_extraction/raw_data/resumes.csv
+PII_extraction/raw_data/f0_t3_resumes.csv
+PII_extraction/raw_data/f0_t100_resumes.csv
+PII_extraction/raw_data/f0_t500_resumes.csv
+PII_extraction/raw_data/f1000_t1500_resumes.csv
+PII_extraction/raw_data/first_resume.csv
