@@ -1,7 +1,6 @@
 import pandas as pd
 from transformers import pipeline, AutoTokenizer
 import re
-from datasets import load_dataset
 
 
 gender_words = {
@@ -18,14 +17,18 @@ ner_pipeline = pipeline("ner",
 
 
 def main():
-    dataset = load_dataset("facehuggerapoorv/resume-jd-match")
-    data = dataset["test"].to_pandas()
+    data = pd.read_csv("raw_data/dataset.csv")
     common_names = pd.read_csv("utils/common_names.csv")
     gender_neutral_job_titles = pd.read_csv("raw_data/gender_neutral_job_titles.csv")
-    data["Resume"] = data["text"].apply(extract_resume)
     data[["Resume"]].to_csv("raw_data/resumes.csv", index=False)
 
-    resumes = pd.read_csv("raw_data/first_resume.csv")
+    pd.DataFrame({"Resume": [data["Resume"][0]]}).to_csv("raw_data/first_resume.csv", index=False)
+    pd.DataFrame({"Resume": data["Resume"][:3]}).to_csv("raw_data/f0_t3_resumes.csv", index=False)
+    pd.DataFrame({"Resume": data["Resume"][:100]}).to_csv("raw_data/f0_t100_resumes.csv", index=False)
+    pd.DataFrame({"Resume": data["Resume"][:500]}).to_csv("raw_data/f0_t500_resumes.csv", index=False)
+    pd.DataFrame({"Resume": data["Resume"][1000:1500]}).to_csv("raw_data/f1000_t1500_resumes.csv", index=False)
+
+    resumes = pd.read_csv("raw_data/resumes.csv")
     extracted_info_dict = {}
 
     # Anonymization
@@ -39,13 +42,10 @@ def main():
         text = anonymize_gender_job_titles(text, idx, gender_neutral_job_titles, extracted_info_dict)
         resumes.at[idx, 'anonymized_text'] = text
 
+    resumes[['anonymized_text']].to_csv("anonymized_files/anonymized_text_2.csv", index=False)
+    resumes[['anonymized_text']].assign(decision=data['decision']).to_csv("anonymized_files/anonymized_text_target_2.csv", index=False)
     resumes.to_csv("anonymized_files/anonymized_file.csv", index=False)
-    pd.DataFrame.from_dict(extracted_info_dict, orient='index').to_csv("anonymized_files/dictionary.csv")
-
-
-def extract_resume(text):
-    match = re.search(r'the resume: <<(.+?)>>\. The result is', text, re.DOTALL)
-    return match.group(1).strip() if match else None
+    pd.DataFrame.from_dict(extracted_info_dict, orient='index').to_csv("anonymized_files/info_dictionary.csv")
 
 
 def predict_entities_chunked(text, chunk_size=400, overlap=50):
@@ -99,7 +99,11 @@ def anonymize_names(text, index, extracted_info_dict):
     if name_parts and not extracted_info_dict[index]['name']:
         order = ['FIRSTNAME', 'MIDDLENAME', 'LASTNAME']
         full_name = ' '.join(name_parts[k] for k in order if k in name_parts)
-        extracted_info_dict[index]['name'].append(full_name)
+        full_name = re.sub(r'[\s:,.\-_|]+$', '', full_name).strip()
+
+        if full_name:
+            extracted_info_dict[index]['name'].append(full_name)
+
         extracted_info_dict[index]['name'] = [
             re.sub(r'[\s:,.\-_|]+$', '', name) for name in extracted_info_dict[index]['name']]
 
@@ -144,10 +148,15 @@ def anonymize_usernames(text, index, extracted_info_dict):
     if not indentified_name(index, extracted_info_dict):
         return text
 
+    if not extracted_info_dict[index].get('name'):
+        return text
+
     if index not in extracted_info_dict:
         extracted_info_dict[index] = {'username': []}
 
-    name = extracted_info_dict[index]['name'][0].split()[0]
+    name_str = extracted_info_dict[index].get('name', [])
+    name = name_str[0].split()[0] if name_str and name_str[0].strip() else ''
+
     no_space = re.escape(re.sub(r'[\s-]', '', name))
     dashed = re.escape(name.lower().replace(" ", "-"))
     pattern = re.compile(f"{no_space}|{dashed}", re.IGNORECASE)
@@ -165,11 +174,8 @@ def anonymize_usernames(text, index, extracted_info_dict):
 def identify_gender(index, extracted_info_dict, common_names):
     """ Identify gender from the first name. """
 
-    if not extracted_info_dict[index]['name']:
-        extracted_info_dict[index]['gender'] = 'unknown'
-        return
-
-    if not indentified_name(index, extracted_info_dict):
+    if index not in extracted_info_dict or not extracted_info_dict[index].get('name'):
+        extracted_info_dict.setdefault(index, {})['gender'] = 'unknown'
         return
 
     full_name = extracted_info_dict[index]['name'][0]
