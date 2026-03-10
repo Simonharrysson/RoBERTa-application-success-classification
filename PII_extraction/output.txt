@@ -1,0 +1,107 @@
+=== BoW results: BEFORE anonymization ===
+              precision    recall  f1-score   support
+
+      reject       0.58      0.56      0.57      1034
+      select       0.56      0.57      0.57      1001
+
+    accuracy                           0.57      2035
+   macro avg       0.57      0.57      0.57      2035
+weighted avg       0.57      0.57      0.57      2035
+
+Ord som ökar chansen att få jobbet:
+  technology                     1.231
+  enthusiasm                     1.241
+  confident                      1.246
+  excellent                      1.272
+  michelle                       1.280
+  expertise                      1.315
+  noteworthy                     1.330
+  drive                          1.339
+  rates                          1.409
+  english                        1.422
+  excited                        1.475
+  contribute                     1.565
+  spanish                        1.644
+  make                           1.804
+  hindi                          1.821
+  known                          1.960
+  fluent                         2.047
+  organization                   2.171
+  select                         2.396
+  domain                         2.480
+
+Ord som minskar chansen att få jobbet:
+  limited                        -3.168
+  areas                          -2.816
+  interview                      -2.270
+  lack                           -1.998
+  struggled                      -1.940
+  reject                         -1.903
+  concerns                       -1.735
+  gaps                           -1.711
+  demonstrated                   -1.694
+  exposure                       -1.463
+  hybrid                         -1.355
+  raised                         -1.329
+  jason                          -1.328
+  difficulty                     -1.247
+  cook                           -1.243
+  preprocessing                  -1.234
+  training                       -1.222
+  position                       -1.201
+  sara                           -1.183
+  improvement                    -1.157
+
+=== BoW results: AFTER anonymization ===
+              precision    recall  f1-score   support
+
+      reject       0.58      0.55      0.56      1034
+      select       0.56      0.58      0.57      1001
+
+    accuracy                           0.57      2035
+   macro avg       0.57      0.57      0.57      2035
+weighted avg       0.57      0.57      0.57      2035
+
+Ord som ökar chansen att få jobbet:
+  strong                         1.253
+  enthusiasm                     1.269
+  confident                      1.283
+  drive                          1.290
+  excellent                      1.301
+  foundation                     1.310
+  noteworthy                     1.344
+  expertise                      1.382
+  english                        1.494
+  contribute                     1.518
+  rates                          1.520
+  excited                        1.526
+  spanish                        1.720
+  make                           1.772
+  hindi                          1.912
+  known                          2.061
+  organization                   2.061
+  fluent                         2.135
+  domain                         2.462
+  select                         2.521
+
+Ord som minskar chansen att få jobbet:
+  limited                        -3.069
+  areas                          -2.775
+  interview                      -2.184
+  reject                         -2.058
+  lack                           -1.907
+  struggled                      -1.804
+  concerns                       -1.630
+  gaps                           -1.609
+  alice                          -1.534
+  hybrid                         -1.357
+  exposure                       -1.348
+  preprocessing                  -1.277
+  demonstrated                   -1.255
+  raised                         -1.249
+  difficulty                     -1.216
+  brown                          -1.214
+  position                       -1.145
+  robotic                        -1.116
+  service                        -1.114
+  challenging                    -1.106
